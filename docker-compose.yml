@@ -1,0 +1,25 @@
+# Build and run both apps locally or on a host with Docker / Docker Compose.
+# From repo root:
+#   docker compose up --build
+# Web UI:  http://localhost:8080
+# API:     http://localhost:3000/health
+services:
+  viks-api:
+    build:
+      context: ./aim/viks-api
+      dockerfile: Dockerfile
+    ports:
+      - "${VIKS_API_PORT:-3000}:3000"
+    environment:
+      PORT: "3000"
+    restart: unless-stopped
+
+  viks-webui:
+    build:
+      context: ./aim/viks-webui
+      dockerfile: Dockerfile
+    ports:
+      - "${VIKS_WEBUI_PORT:-8080}:80"
+    depends_on:
+      - viks-api
+    restart: unless-stopped
