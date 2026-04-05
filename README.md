@@ -114,10 +114,13 @@ The webui image sets `PUPPETEER_SKIP_DOWNLOAD=true` during `npm ci` so the Docke
 - Configure the job to use the **root** `Jenkinsfile` and checkout this repository.
 - The agent needs **Node.js and npm** on `PATH` (`sh` steps assume a Unix-like agent or WSL-style shell).
 - **Puppeteer cache** for repeatable cache purge tests: `PUPPETEER_CACHE_DIR` is set to  
-  `${WORKSPACE}/aim/viks-webui/.cache/puppeteer`.
+  `/mnt/vladimir/.cache/puppeteer` (shared on the agent). The **Test viks-webui** stage runs  
+  `npx puppeteer browsers install chrome` before tests so Chromium is present after cache purges.
 - Stages follow a production-like pattern: checkout, tool install, initialization, git metadata, then **viks-webui** and **viks-api** (test → build → placeholder SonarQube → placeholder Docker). Replace the SonarQube and Docker **echo** stages with real steps when your environment supports them.
 
 No extra Jenkins plugins are required for the current pipeline beyond what you already use for Git and Pipeline.
+
+**SonarQube:** see **[SONARQUBE.md](SONARQUBE.md)** for server install (Docker + PostgreSQL), Jenkins plugin, and wiring **`viks-webui`** / **`viks-api`**.
 
 ### Jenkins on Hyper-V (Ubuntu guest)
 
@@ -145,14 +148,21 @@ Use these on the **Linux VM** (Ubuntu 24.x) where Jenkins runs—**not** on Wind
 
    If it still fails, compare with [Puppeteer Linux troubleshooting](https://pptr.dev/troubleshooting) and add any extra packages it lists for your Chromium build.
 
-3. **Create the Jenkins job:** New Item → Pipeline (or Multibranch), definition **Pipeline script from SCM**, SCM Git, branch `main` (or yours), Script Path **`Jenkinsfile`** (repository root).
-
-4. **Build:** **Build Now** and open **Stage View**; you should see stages such as `Test viks-webui`, `Build viks-webui`, `Test viks-api`, etc.
-
-5. **Optional — same VM, Docker Compose app stack** (separate from Jenkins): from a clone of this repo on the VM:
+3. **Shared Puppeteer cache directory** — the pipeline uses `PUPPETEER_CACHE_DIR=/mnt/vladimir/.cache/puppeteer`. On the agent, create the path (or mount NFS there) and ensure the user that runs builds can write to it, for example:
 
    ```bash
-   cd /path/to/angular_test
+   sudo mkdir -p /mnt/vladimir/.cache/puppeteer
+   sudo chown -R <jenkins-agent-user>:<group> /mnt/vladimir/.cache
+   ```
+
+4. **Create the Jenkins job:** New Item → Pipeline (or Multibranch), definition **Pipeline script from SCM**, SCM Git, branch `main` (or yours), Script Path **`Jenkinsfile`** (repository root).
+
+5. **Build:** **Build Now** and open **Stage View**; you should see stages such as `Test viks-webui`, `Build viks-webui`, `Test viks-api`, etc.
+
+6. **Optional — same VM, Docker Compose app stack** (separate from Jenkins): from a clone of this repo on the VM:
+
+   ```bash
+   cd /path/to/angular.jenkins.solution
    docker compose up --build -d
    ```
 

@@ -15,7 +15,8 @@ pipeline {
         CI = 'true'
         WEBUI_DIR = 'aim/viks-webui'
         API_DIR = 'aim/viks-api'
-        PUPPETEER_CACHE_DIR = "${env.WORKSPACE}/aim/viks-webui/.cache/puppeteer"
+        // Shared browser cache on Jenkins agents (Linux). Align with karma.conf.js default on Linux.
+        PUPPETEER_CACHE_DIR = '/mnt/vladimir/.cache/puppeteer'
     }
 
     stages {
@@ -50,6 +51,7 @@ pipeline {
             steps {
                 dir(env.WEBUI_DIR) {
                     sh 'npm ci --legacy-peer-deps'
+                    sh 'npx puppeteer browsers install chrome'
                     sh 'npm run test:ci'
                 }
             }
