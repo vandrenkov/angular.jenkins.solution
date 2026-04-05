@@ -2,7 +2,10 @@
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
 // Resolve Chromium from Puppeteer (same pattern as many Angular+Karma CI setups).
-// PUPPETEER_CACHE_DIR can be set by Jenkins to pin the browser download cache for purge tests.
+// Jenkins sets PUPPETEER_CACHE_DIR. On Linux without env, default to shared agent cache (Windows dev uses Puppeteer default).
+if (!process.env.PUPPETEER_CACHE_DIR && process.platform === 'linux') {
+  process.env.PUPPETEER_CACHE_DIR = '/mnt/vladimir/.cache/puppeteer';
+}
 const puppeteer = require('puppeteer');
 process.env.CHROME_BIN = puppeteer.executablePath();
 
