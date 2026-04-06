@@ -63,6 +63,7 @@ pipeline {
 
                     // Production has this
                     sh 'npm install  --legacy-peer-deps'
+                    sh 'npx puppeteer browsers install chrome'
                     sh 'npm run test:headless'
                 }
             }
