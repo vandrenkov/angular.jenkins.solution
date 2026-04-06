@@ -52,6 +52,15 @@ module.exports = function (config) {
           '--disable-dev-shm-usage',
           '--no-proxy-server'
         ]
+      },
+      ChromeHeadlessCI: {
+        base: 'ChromeHeadless',
+        flags: [
+          '--no-sandbox',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+          '--no-proxy-server'
+        ]
       }
     },
     singleRun: true,
