@@ -44,20 +44,7 @@ module.exports = function (config) {
     // browsers: ['Chrome'],
     browsers: ['ChromeHeadlessCI'],
     customLaunchers: {
-      /*
-      //New logic
       ChromeHeadlessCI: {
-        base: 'ChromeHeadless',
-        flags: [
-          '--no-sandbox',
-          '--disable-gpu',
-          '--disable-dev-shm-usage',
-          '--no-proxy-server'
-        ]
-      },
-      */
-      // old logic
-      ChromeHeadless: {
         base: 'ChromeHeadless',
         flags: [
           '--no-sandbox',
