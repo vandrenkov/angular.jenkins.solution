@@ -57,7 +57,7 @@ module.exports = function (config) {
       },
       */
       // old logic
-      ChromeHeadlessCI: {
+      ChromeHeadless: {
         base: 'ChromeHeadless',
         flags: [
           '--no-sandbox',
