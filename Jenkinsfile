@@ -11,6 +11,15 @@ pipeline {
         timeout(time: 45, unit: 'MINUTES')
     }
 
+    tools {
+        nodejs 'node' // This must match the name you gave in Global Tool Configuration
+    }
+
+    options {
+        timestamps()
+        timeout(time: 30, unit: 'MINUTES')
+    }    
+
     environment {
         CI = 'true'
         WEBUI_DIR = 'aim/viks-webui'
