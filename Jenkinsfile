@@ -56,9 +56,14 @@ pipeline {
         stage('Test viks-webui') {
             steps {
                 dir(env.WEBUI_DIR) {
-                    sh 'npm ci --legacy-peer-deps'
-                    sh 'npx puppeteer browsers install chrome'
-                    sh 'npm run test:ci'
+                    // New logic
+                    // sh 'npm ci --legacy-peer-deps'
+                    // sh 'npx puppeteer browsers install chrome'
+                    // sh 'npm run test:ci'
+
+                    // Production has this
+                    sh 'npm install  --legacy-peer-deps'
+                    sh 'npm run test:headless'
                 }
             }
         }
