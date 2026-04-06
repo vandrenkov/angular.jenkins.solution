@@ -44,6 +44,8 @@ module.exports = function (config) {
     // browsers: ['Chrome'],
     browsers: ['ChromeHeadlessCI'],
     customLaunchers: {
+      /*
+      //New logic
       ChromeHeadlessCI: {
         base: 'ChromeHeadless',
         flags: [
@@ -53,6 +55,8 @@ module.exports = function (config) {
           '--no-proxy-server'
         ]
       },
+      */
+      // old logic
       ChromeHeadlessCI: {
         base: 'ChromeHeadless',
         flags: [
