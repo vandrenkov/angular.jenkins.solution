@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "test": "node --test test/health.test.cjs",
-    "build": "node scripts/build.cjs"
+    "build": "node scripts/build.cjs",
+    "test:headless": "ng test --watch=false --browsers=ChromeHeadlessCI"
   },
   "engines": {
     "node": ">=18"
