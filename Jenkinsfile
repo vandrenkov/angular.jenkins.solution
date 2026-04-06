@@ -6,11 +6,6 @@
 pipeline {
     agent any
 
-    options {
-        timestamps()
-        timeout(time: 45, unit: 'MINUTES')
-    }
-
     tools {
         nodejs 'node' // This must match the name you gave in Global Tool Configuration
     }
