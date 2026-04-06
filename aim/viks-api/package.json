@@ -8,7 +8,7 @@
     "test": "node --test test/health.test.cjs",
     "build": "node scripts/build.cjs",
     "test:ci": "ng test viks-webui --no-progress --watch=false --browsers=ChromeHeadlessCI --code-coverage"
-    //"test:headless": "ng test --no-watch --no-progress   --code-coverage --browsers=ChromeHeadless"
+    /*"test:headless": "ng test --no-watch --no-progress   --code-coverage --browsers=ChromeHeadless"*/
   },
   "engines": {
     "node": ">=18"
