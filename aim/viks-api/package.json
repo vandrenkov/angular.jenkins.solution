@@ -7,7 +7,7 @@
     "start": "node src/index.js",
     "test": "node --test test/health.test.cjs",
     "build": "node scripts/build.cjs",
-    "test:headless": "ng test --watch=false --browsers=ChromeHeadlessCI"
+    "test:headless": "ng test --no-watch --no-progress   --code-coverage --browsers=ChromeHeadless"
   },
   "engines": {
     "node": ">=18"
