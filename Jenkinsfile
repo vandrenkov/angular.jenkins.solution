@@ -7,7 +7,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'node' // This must match the name you gave in Global Tool Configuration
+        nodejs 'node20' // This must match the name you gave in Global Tool Configuration
     }
 
     options {
