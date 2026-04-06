@@ -60,10 +60,6 @@ pipeline {
                     sh 'npm ci --legacy-peer-deps'
                     sh 'npx puppeteer browsers install chrome'
                     sh 'npm run test:ci'
-                    // Production has this
-                    //sh 'npm install  --legacy-peer-deps'
-                    //sh 'npx puppeteer browsers install chrome'
-                    //sh 'npm run test:headless'
                 }
             }
         }
@@ -92,8 +88,7 @@ pipeline {
             steps {
                 dir(env.API_DIR) {
                     sh 'npm ci'
-                    //sh 'npm test:headless'
-                    sh 'npm test'
+                    sh 'npm test:headless'
                 }
             }
         }
