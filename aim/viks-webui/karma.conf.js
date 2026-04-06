@@ -4,7 +4,7 @@
 // Resolve Chromium from Puppeteer (same pattern as many Angular+Karma CI setups).
 // Jenkins sets PUPPETEER_CACHE_DIR. On Linux without env, default to shared agent cache (Windows dev uses Puppeteer default).
 if (!process.env.PUPPETEER_CACHE_DIR && process.platform === 'linux') {
-  process.env.PUPPETEER_CACHE_DIR = '/mnt/vladimir/.cache/puppeteer';
+  process.env.PUPPETEER_CACHE_DIR = '${env.WORKSPACE}/.cache/puppeteer';
 }
 const puppeteer = require('puppeteer');
 process.env.CHROME_BIN = puppeteer.executablePath();
