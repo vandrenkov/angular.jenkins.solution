@@ -7,8 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test viks-webui",
-    // "test:ci": "ng test viks-webui --no-progress --watch=false --browsers=ChromeHeadlessCI --code-coverage",
-    "test:headless": "ng test --no-watch --no-progress   --code-coverage --browsers=ChromeHeadless"
+    "test:ci": "ng test viks-webui --no-progress --watch=false --browsers=ChromeHeadlessCI --code-coverage"
+    //"test:headless": "ng test --no-watch --no-progress   --code-coverage --browsers=ChromeHeadless"
   },
   "private": true,
   "dependencies": {
