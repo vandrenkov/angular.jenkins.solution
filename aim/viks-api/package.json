@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "test": "node --test test/health.test.cjs",
-    "build": "node scripts/build.cjs",
-    "test:ci": "ng test viks-webui --no-progress --watch=false --browsers=ChromeHeadlessCI --code-coverage"
+    "build": "node scripts/build.cjs"
   },
   "engines": {
     "node": ">=18"

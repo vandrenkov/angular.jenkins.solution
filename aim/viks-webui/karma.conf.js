@@ -2,9 +2,10 @@
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
 // Resolve Chromium from Puppeteer (same pattern as many Angular+Karma CI setups).
-// Jenkins sets PUPPETEER_CACHE_DIR. On Linux without env, default to shared agent cache (Windows dev uses Puppeteer default).
+// Jenkins sets PUPPETEER_CACHE_DIR. On Linux without env, default under repo root (two levels up from this file).
+const path = require('path');
 if (!process.env.PUPPETEER_CACHE_DIR && process.platform === 'linux') {
-  process.env.PUPPETEER_CACHE_DIR = '${env.WORKSPACE}/.cache/puppeteer';
+  process.env.PUPPETEER_CACHE_DIR = path.join(__dirname, '..', '..', '.cache', 'puppeteer');
 }
 const puppeteer = require('puppeteer');
 process.env.CHROME_BIN = puppeteer.executablePath();

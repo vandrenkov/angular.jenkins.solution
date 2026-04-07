@@ -43,6 +43,7 @@ pipeline {
                 sh '''
                     echo "WORKSPACE=${WORKSPACE}"
                     echo "PUPPETEER_CACHE_DIR=${PUPPETEER_CACHE_DIR}"
+                    df -h . || true
                 '''
             }
         }
@@ -56,8 +57,13 @@ pipeline {
         stage('Test viks-webui') {
             steps {
                 dir(env.WEBUI_DIR) {
-                    // New logic
-                    sh 'npm ci --legacy-peer-deps'
+                    // Skip Puppeteer's postinstall download during npm ci (avoids duplicate fetch vs
+                    // "browsers install" and reduces peak disk use). Browser goes to PUPPETEER_CACHE_DIR.
+                    // If npm ci still fails with ENOSPC, free disk on the agent (Docker volume / prune workspaces).
+                    sh '''
+                        export PUPPETEER_SKIP_DOWNLOAD=true
+                        npm ci --legacy-peer-deps
+                    '''
                     sh 'npx puppeteer browsers install chrome'
                     sh 'npm run test:ci'
                 }
@@ -88,7 +94,7 @@ pipeline {
             steps {
                 dir(env.API_DIR) {
                     sh 'npm ci'
-                    sh 'npm test:headless'
+                    sh 'npm test'
                 }
             }
         }
