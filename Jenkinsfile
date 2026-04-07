@@ -21,8 +21,8 @@ pipeline {
         API_DIR = 'aim/viks-api'
         // Shared browser cache on Jenkins agents (Linux). Align with karma.conf.js default on Linux.
         // PUPPETEER_CACHE_DIR = '/mnt/azagent01/.cache/puppeteer'
-        // PUPPETEER_CACHE_DIR = "${env.WORKSPACE}/.cache/puppeteer"
-        PUPPETEER_CACHE_DIR = "/home/azagent01/.cache/puppeteer"
+        PUPPETEER_CACHE_DIR = "${env.WORKSPACE}/.cache/puppeteer"
+        // PUPPETEER_CACHE_DIR = "/home/azagent01/.cache/puppeteer"
     }
 
     stages {
