@@ -38,15 +38,15 @@ pipeline {
             }
         }
 
-        stage('Initialization') {
-            steps {
-                sh '''
-                    echo "WORKSPACE=${WORKSPACE}"
-                    echo "PUPPETEER_CACHE_DIR=${PUPPETEER_CACHE_DIR}"
-                    df -h . || true
-                '''
-            }
-        }
+        // stage('Initialization') {
+        //     steps {
+        //         sh '''
+        //             echo "WORKSPACE=${WORKSPACE}"
+        //             echo "PUPPETEER_CACHE_DIR=${PUPPETEER_CACHE_DIR}"
+        //             df -h . || true
+        //         '''
+        //     }
+        // }
 
         stage('Git') {
             steps {
