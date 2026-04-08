@@ -158,8 +158,8 @@ pipeline {
                     sh """
                         if [ -d "${ROOT}" ]; then
                             echo "Puppeteer cache found"
-                            # Delete all files and subdirectories inside the directory
-                            rm -rf "${ROOT:?}"/*
+                            # Escape the dollar sign so Groovy ignores the shell check
+                            rm -rf "\${ROOT:?}"/*
                         else
                             echo "Puppeteer cache not found"
                         fi
