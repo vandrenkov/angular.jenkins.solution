@@ -154,6 +154,7 @@ pipeline {
         
                     // withEnv makes the variable available to the 'sh' step as a real environment variable
                     withEnv(["ROOT=${groovyRoot}"]) {
+                        /*
                         sh """
                             if [ -d "\${ROOT}" ]; then
                                 echo "Puppeteer cache found"
@@ -164,6 +165,15 @@ pipeline {
                             fi
                             echo "Purge complete."
                         """
+                        */
+                        
+                        //Delete using Jenkins-Native way
+                        if (fileExists(ROOT)) {
+                            dir(ROOT) {
+                                deleteDir() // This deletes EVERYTHING inside the folder, including hidden files
+                            }
+                        }
+
                     }
                 }
             }
