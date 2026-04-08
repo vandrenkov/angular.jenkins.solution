@@ -129,31 +129,31 @@ pipeline {
 
                     // Safe deletion: only delete directories older than 30 days
                     // For things like file cleanup, "sh" is usually more reliable, faster, and simpler than Groovy/Jenkins-native steps
-                    sh """
-                        if [ -d "${ROOT}" ]; then
-                            echo "Puppeteer cache found"
+                    // sh """
+                    //     if [ -d "${ROOT}" ]; then
+                    //         echo "Puppeteer cache found"
                     
-                            # Check if any old files or directories exist
-                            if find "${ROOT}" -mtime +30 | grep -q .; then
-                                echo "Old cache files found. Deleting..."
+                    //         # Check if any old files or directories exist
+                    //         if find "${ROOT}" -mtime +30 | grep -q .; then
+                    //             echo "Old cache files found. Deleting..."
                     
-                                # Delete files older than 30 days
-                                find "${ROOT}" -type f -mtime +30 -delete || true
+                    //             # Delete files older than 30 days
+                    //             find "${ROOT}" -type f -mtime +30 -delete || true
                     
-                                # Delete empty directories older than 30 days
-                                find "${ROOT}" -type d -empty -mtime +30 -delete || true
+                    //             # Delete empty directories older than 30 days
+                    //             find "${ROOT}" -type d -empty -mtime +30 -delete || true
                     
-                                echo "Old cache cleaned."
-                            else
-                                echo "No cache files or folders older than 30 days found to delete."
-                            fi
+                    //             echo "Old cache cleaned."
+                    //         else
+                    //             echo "No cache files or folders older than 30 days found to delete."
+                    //         fi
                     
-                        else
-                            echo "Puppeteer cache NOT found"
-                        fi
+                    //     else
+                    //         echo "Puppeteer cache NOT found"
+                    //     fi
                     
-                        echo "Purge complete."
-                    """
+                    //     echo "Purge complete."
+                    // """
 
                    //Native Jenkins/Groovy delete (failing un runs?)
                 //     if (fileExists(ROOT)) {
@@ -183,41 +183,41 @@ pipeline {
         }
 
         //Test #2: Stage to purge ALL browser cache (puppeteer)
-        stage('Purge All Puppeteer Cache') {
-            steps {
-                script {
-                    echo "Purging All Puppeteer cache starting..."
+        // stage('Purge All Puppeteer Cache') {
+        //     steps {
+        //         script {
+        //             echo "Purging All Puppeteer cache starting..."
                     
-                    def groovyRoot = "${env.WORKSPACE}/.cache/puppeteer"
-                    echo "Purging All Puppeteer cache under ${groovyRoot} ..."                    
+        //             def groovyRoot = "${env.WORKSPACE}/.cache/puppeteer"
+        //             echo "Purging All Puppeteer cache under ${groovyRoot} ..."                    
         
-                    // withEnv makes the variable available to the 'sh' step as a real environment variable
-                    withEnv(["ROOT=${groovyRoot}"]) {
+        //             // withEnv makes the variable available to the 'sh' step as a real environment variable
+        //             withEnv(["ROOT=${groovyRoot}"]) {
                        
-                        // sh """
-                        //     if [ -d "\${ROOT}" ]; then
-                        //         echo "Puppeteer cache found"
-                        //         # Now the shell knows what \${ROOT} is and can run the safety check
-                        //         rm -rf "\${ROOT:?}"/*
-                        //     else
-                        //         echo "Puppeteer cache not found"
-                        //     fi
-                        //     echo "Purge complete."
-                        // """
+        //                 // sh """
+        //                 //     if [ -d "\${ROOT}" ]; then
+        //                 //         echo "Puppeteer cache found"
+        //                 //         # Now the shell knows what \${ROOT} is and can run the safety check
+        //                 //         rm -rf "\${ROOT:?}"/*
+        //                 //     else
+        //                 //         echo "Puppeteer cache not found"
+        //                 //     fi
+        //                 //     echo "Purge complete."
+        //                 // """
                         
                         
-                        //Delete using Jenkins-Native way
-                        // if (fileExists(ROOT)) {
-                        //     dir(ROOT) {
-                        //         deleteDir() // This deletes EVERYTHING inside the folder, including hidden files
-                        //     }
-                        // }
+        //                 //Delete using Jenkins-Native way
+        //                 // if (fileExists(ROOT)) {
+        //                 //     dir(ROOT) {
+        //                 //         deleteDir() // This deletes EVERYTHING inside the folder, including hidden files
+        //                 //     }
+        //                 // }
 
-                        echo "Purging All Puppeteer cache done"
-                    }
-                }
-            }
-        }
+        //                 echo "Purging All Puppeteer cache done"
+        //             }
+        //         }
+        //     }
+        // }
 
         
     }
