@@ -18,6 +18,7 @@ pipeline {
     environment {
         CI = 'true'
         WEBUI_DIR = 'aim/viks-webui'
+        AIM_WEBUI_DIR = 'aim/aim-webui'
         API_DIR = 'aim/viks-api'
         // Shared browser cache on Jenkins agents (Linux). Align with karma.conf.js default on Linux.
         // PUPPETEER_CACHE_DIR = '/mnt/azagent01/.cache/puppeteer'
@@ -54,6 +55,44 @@ pipeline {
             }
         }
 
+
+        // --- NEW: AIM-WEBUI STAGES ---
+        stage('Test aim-webui') {
+            steps {
+                dir(env.AIM_WEBUI_DIR) {
+                    sh '''
+                        export PUPPETEER_SKIP_DOWNLOAD=true
+                        npm ci --legacy-peer-deps
+                        npx puppeteer browsers install chrome
+                        npm run test
+                    '''
+                }
+            }
+        }
+
+        stage('Build aim-webui') {
+            steps {
+                dir(env.AIM_WEBUI_DIR) {
+                    // Note: Angular 18 projects usually build via 'ng build' 
+                    // which uses the project name defined in angular.json
+                    sh 'npx ng build --configuration production'
+                }
+            }
+        }
+
+        stage('SonarQube aim-webui') {
+            steps {
+                sh 'echo "[SKIP] SonarQube aim-webui — configure SonarQube Scanner to enable."'
+            }
+        }
+
+        stage('Docker CI aim-webui') {
+            steps {
+                sh 'echo "[PLACEHOLDER] Docker CI aim-webui — add image build/push when ready."'
+            }
+        }
+
+        
         stage('Test viks-webui') {
             steps {
                 dir(env.WEBUI_DIR) {
