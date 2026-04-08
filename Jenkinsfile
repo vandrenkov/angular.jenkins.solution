@@ -142,12 +142,12 @@ pipeline {
                     """
                     */
 
-                    //Native Jenkins/Groovy delete
+                   //Native Jenkins/Groovy delete
                     if (fileExists(ROOT)) {
                         echo "Purging Puppeteer cache older than 30 days under ${ROOT} ..."
                         
                         // 1. Find all files/directories in the workspace path
-                        // This step is "Agent-aware"
+                        // This step is "Agent-aware". Note: findFiles uses relative pathing from workspace.
                         def files = findFiles(glob: ".cache/puppeteer/**")
                         
                         long now = System.currentTimeMillis()
@@ -157,6 +157,7 @@ pipeline {
                             if ((now - f.lastModified) > cutoff) {
                                 echo "Deleting old item: ${f.path}"
                                 // Use sh to ensure we have permissions and handle recursive directory deletion
+                                // We use single quotes around the path to handle spaces or special chars
                                 sh "rm -rf '${env.WORKSPACE}/${f.path}'"
                             }
                         }
