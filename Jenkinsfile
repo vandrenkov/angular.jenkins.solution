@@ -62,10 +62,6 @@ pipeline {
                         export PUPPETEER_SKIP_DOWNLOAD=true
                         npm ci --legacy-peer-deps
                         npx puppeteer browsers install chrome
-
-                        // export CHROME_BIN=$(npx puppeteer browsers path chrome)
-                        // echo "Using Chrome at $CHROME_BIN"
-                        
                         npm run test
                     '''
                 }
@@ -104,16 +100,9 @@ pipeline {
                     sh '''
                         export PUPPETEER_SKIP_DOWNLOAD=true
                         npm ci --legacy-peer-deps
-
                         npx puppeteer browsers install chrome
-
-                        // export CHROME_BIN=$(npx puppeteer browsers path chrome)
-                        // echo "Using Chrome at $CHROME_BIN"
-                        
                         npm run test:ci'
                     '''
-                    // sh 'npx puppeteer browsers install chrome'
-                    // sh 'npm run test:ci'
                 }
             }
         }
