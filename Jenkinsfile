@@ -131,17 +131,26 @@ pipeline {
                     sh """
                         if [ -d "${ROOT}" ]; then
                             echo "Puppeteer cache found"
-        
-                            # Delete files older than 30 days
-                            find "${ROOT}" -type f -mtime +30 -delete || true
-        
-                            # Delete empty directories older than 30 days
-                            find "${ROOT}" -type d -empty -mtime +30 -delete || true
-        
+                    
+                            # Check if any old files or directories exist
+                            if find "${ROOT}" -mtime +30 | grep -q .; then
+                                echo "Old cache files found. Deleting..."
+                    
+                                # Delete files older than 30 days
+                                find "${ROOT}" -type f -mtime +30 -delete || true
+                    
+                                # Delete empty directories older than 30 days
+                                find "${ROOT}" -type d -empty -mtime +30 -delete || true
+                    
+                                echo "Old cache cleaned."
+                            else
+                                echo "No cache files or folders older than 30 days found to delete."
+                            fi
+                    
                         else
                             echo "Puppeteer cache NOT found"
                         fi
-        
+                    
                         echo "Purge complete."
                     """
 
