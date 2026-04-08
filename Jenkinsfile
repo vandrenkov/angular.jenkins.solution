@@ -18,6 +18,7 @@ pipeline {
     environment {
         CI = 'true'
         WEBUI_DIR = 'aim/viks-webui'
+        AIM_WEBUI_DIR = 'aim/aim-webui'
         API_DIR = 'aim/viks-api'
         // Shared browser cache on Jenkins agents (Linux). Align with karma.conf.js default on Linux.
         // PUPPETEER_CACHE_DIR = '/mnt/azagent01/.cache/puppeteer'
@@ -111,6 +112,58 @@ pipeline {
             }
         }
 
+
+// ###################################################################################
+        stage('Test aim-webui') {
+            steps {
+                dir(env.AIM_WEBUI_DIR) {
+
+                    // PUPPETEER_CACHE_DIR must be exported in the same sh block as browsers install chrome.
+                    // Otherwise Puppeteer will ignore it and download to default location like: ~/.npm/_npx/<hash>/node_modules/puppeteer/.local-chromium
+                     sh '''
+                        # Force Puppeteer to download Chrome into workspace
+                        export PUPPETEER_CACHE_DIR=$WORKSPACE/.cache/puppeteer
+                        export PUPPETEER_SKIP_DOWNLOAD=false
+        
+                        echo "Installing Chromium for Puppeteer in $PUPPETEER_CACHE_DIR..."
+                        npx puppeteer browsers install chrome
+        
+                        # Confirm installation
+                        echo "Chrome binary path:"
+                        npx puppeteer browsers path chrome
+                        ls -R $PUPPETEER_CACHE_DIR || true
+        
+                        # Export CHROME_BIN so Karma finds it
+                        export CHROME_BIN=$(npx puppeteer browsers path chrome)
+        
+                        # Run tests
+                        npm run test:ci
+                    '''
+                }
+            }
+        }
+
+        stage('Build aim-webui') {
+            steps {
+                dir(env.AIM_WEBUI_DIR) {
+                    sh 'npx ng build viks-webui --configuration production'
+                }
+            }
+        }
+
+        stage('SonarQube aim-webui') {
+            steps {
+                sh 'echo "[SKIP] SonarQube aim-webui — configure SonarQube Scanner + server to enable."'
+            }
+        }
+
+        stage('Docker CI aim-webui') {
+            steps {
+                sh 'echo "[PLACEHOLDER] Docker CI aim-webui — add image build/push when ready."'
+            }
+        }        
+// ###################################################################################
+        
         stage('Test viks-api') {
             steps {
                 dir(env.API_DIR) {
