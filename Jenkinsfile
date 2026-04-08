@@ -128,22 +128,22 @@ pipeline {
                     echo "Purging Puppeteer cache older than 30 days under ${ROOT} ..."
 
                     // Safe deletion: only delete directories older than 30 days
-                    sh """
-                        if [ -d "${ROOT}" ]; then
-                            echo "Puppeteer cache found"
+                    // sh """
+                    //     if [ -d "${ROOT}" ]; then
+                    //         echo "Puppeteer cache found"
         
-                            # Delete files older than 30 days
-                            find "${ROOT}" -type f -mtime +30 -delete || true
+                    //         # Delete files older than 30 days
+                    //         find "${ROOT}" -type f -mtime +30 -delete || true
         
-                            # Delete empty directories older than 30 days
-                            find "${ROOT}" -type d -empty -mtime +30 -delete || true
+                    //         # Delete empty directories older than 30 days
+                    //         find "${ROOT}" -type d -empty -mtime +30 -delete || true
         
-                        else
-                            echo "Puppeteer cache NOT found"
-                        fi
+                    //     else
+                    //         echo "Puppeteer cache NOT found"
+                    //     fi
         
-                        echo "Purge complete."
-                    """
+                    //     echo "Purge complete."
+                    // """
 
                    //Native Jenkins/Groovy delete (failing un runs?)
                 //     if (fileExists(ROOT)) {
