@@ -146,25 +146,24 @@ pipeline {
         }
         */
 
-        //Test #2: Stage to purge all browser cache (puppeteer)
         stage('Purge All Puppeteer Cache') {
             steps {
                 script {
-                    // ROOT points to the job workspace
-                    def ROOT = "${env.WORKSPACE}/.cache/puppeteer"
-
-                    echo "Purging all Puppeteer cache under ${ROOT} ..."
-
-                    sh """
-                        if [ -d "${ROOT}" ]; then
-                            echo "Puppeteer cache found"
-                            # Escape the dollar sign so Groovy ignores the shell check
-                            rm -rf "\${ROOT:?}"/*
-                        else
-                            echo "Puppeteer cache not found"
-                        fi
-                        echo "Purge complete."
-                    """
+                    def groovyRoot = "${env.WORKSPACE}/.cache/puppeteer"
+        
+                    // withEnv makes the variable available to the 'sh' step as a real environment variable
+                    withEnv(["ROOT=${groovyRoot}"]) {
+                        sh """
+                            if [ -d "\${ROOT}" ]; then
+                                echo "Puppeteer cache found"
+                                # Now the shell knows what \${ROOT} is and can run the safety check
+                                rm -rf "\${ROOT:?}"/*
+                            else
+                                echo "Puppeteer cache not found"
+                            fi
+                            echo "Purge complete."
+                        """
+                    }
                 }
             }
         }
