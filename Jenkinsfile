@@ -65,6 +65,7 @@ pipeline {
 
                         export CHROME_BIN=$(npx puppeteer browsers path chrome)
                         echo "Using Chrome at $CHROME_BIN"
+                        ls -l "$CHROME_BIN"
 
                         npm run test
                     '''
