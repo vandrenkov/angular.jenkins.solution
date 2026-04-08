@@ -183,10 +183,10 @@ pipeline {
         }
 
         //Test #2: Stage to purge ALL browser cache (puppeteer)
-        // stage('Purge All Puppeteer Cache') {
-        //     steps {
-        //         script {
-        //             echo "Purging All Puppeteer cache starting..."
+         stage('Purge All Puppeteer Cache') {
+             steps {
+                 script {
+                     echo "Purging All Puppeteer cache starting..."
                     
         //             def groovyRoot = "${env.WORKSPACE}/.cache/puppeteer"
         //             echo "Purging All Puppeteer cache under ${groovyRoot} ..."                    
@@ -216,8 +216,8 @@ pipeline {
         //                 echo "Purging All Puppeteer cache done"
         //             }
         //         }
-        //     }
-        // }
+             }
+         }
 
         
     }
