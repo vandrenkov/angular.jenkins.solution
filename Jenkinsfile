@@ -61,7 +61,7 @@ pipeline {
                     // "browsers install" and reduces peak disk use). Browser goes to PUPPETEER_CACHE_DIR.
                     // If npm ci still fails with ENOSPC, free disk on the agent (Docker volume / prune workspaces).
                     sh '''
-                        export PUPPETEER_SKIP_DOWNLOAD=true
+                        export PUPPETEER_SKIP_DOWNLOAD=false
                         npm ci --legacy-peer-deps
                     '''
                     sh 'npx puppeteer browsers install chrome'
