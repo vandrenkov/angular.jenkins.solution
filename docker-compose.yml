@@ -24,12 +24,3 @@ services:
       - viks-api
     restart: unless-stopped
 
-  aim-webui:
-    build:
-      context: ./aim/aim-webui
-      dockerfile: Dockerfile
-    ports:
-      - "${AIM_WEBUI_PORT:-8080}:80"
-    depends_on:
-      - viks-api
-    restart: unless-stopped    
