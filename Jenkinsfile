@@ -128,6 +128,7 @@ pipeline {
                     echo "Purging Puppeteer cache older than 30 days under ${ROOT} ..."
 
                     // Safe deletion: only delete directories older than 30 days
+                    // For things like file cleanup, "sh" is usually more reliable, faster, and simpler than Groovy/Jenkins-native steps
                     sh """
                         if [ -d "${ROOT}" ]; then
                             echo "Puppeteer cache found"
