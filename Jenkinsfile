@@ -125,7 +125,6 @@ pipeline {
                 script {
                     // ROOT points to the job workspace
                     def ROOT = "${env.WORKSPACE}/.cache/puppeteer"
-                    /*
                     echo "Purging Puppeteer cache older than 30 days under ${ROOT} ..."
 
                     // Safe deletion: only delete directories older than 30 days
@@ -145,7 +144,6 @@ pipeline {
         
                         echo "Purge complete."
                     """
-                    */
 
                    //Native Jenkins/Groovy delete (failing un runs?)
                 //     if (fileExists(ROOT)) {
