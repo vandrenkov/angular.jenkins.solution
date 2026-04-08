@@ -38,16 +38,6 @@ pipeline {
             }
         }
 
-        // stage('Initialization') {
-        //     steps {
-        //         sh '''
-        //             echo "WORKSPACE=${WORKSPACE}"
-        //             echo "PUPPETEER_CACHE_DIR=${PUPPETEER_CACHE_DIR}"
-        //             df -h . || true
-        //         '''
-        //     }
-        // }
-
         stage('Git') {
             steps {
                 sh 'git rev-parse HEAD && git status -sb || true'
@@ -60,21 +50,42 @@ pipeline {
                     // Skip Puppeteer's postinstall download during npm ci (avoids duplicate fetch vs
                     // "browsers install" and reduces peak disk use). Browser goes to PUPPETEER_CACHE_DIR.
                     // If npm ci still fails with ENOSPC, free disk on the agent (Docker volume / prune workspaces).
-                    sh '''
+                    // sh '''
+                    //     export PUPPETEER_CACHE_DIR=$WORKSPACE/.cache/puppeteer
+                    //     export PUPPETEER_SKIP_DOWNLOAD=false
+                        
+                    //     npm ci --legacy-peer-deps
+
+                    //     npx puppeteer browsers install chrome
+
+                    //     export CHROME_BIN=$(npx puppeteer browsers path chrome)
+                    //     echo "Chrome executable at $CHROME_BIN"
+                        
+                    //     npm run test:ci
+                    // '''
+
+
+
+                     sh '''
+                        # Force Puppeteer to download Chrome into workspace
                         export PUPPETEER_CACHE_DIR=$WORKSPACE/.cache/puppeteer
                         export PUPPETEER_SKIP_DOWNLOAD=false
-                        
-                        npm ci --legacy-peer-deps
-
+        
+                        echo "Installing Chromium for Puppeteer in $PUPPETEER_CACHE_DIR..."
                         npx puppeteer browsers install chrome
-
+        
+                        # Confirm installation
+                        echo "Chrome binary path:"
+                        npx puppeteer browsers path chrome
+                        ls -R $PUPPETEER_CACHE_DIR || true
+        
+                        # Export CHROME_BIN so Karma finds it
                         export CHROME_BIN=$(npx puppeteer browsers path chrome)
-                        echo "Chrome executable at $CHROME_BIN"
-                        
+        
+                        # Run tests
                         npm run test:ci
                     '''
-                    // sh 'npx puppeteer browsers install chrome'
-                    // sh 'npm run test:ci'
+                    
                 }
             }
         }
