@@ -58,17 +58,18 @@ pipeline {
         stage('Test aim-webui') {
             steps {
                 dir(env.AIM_WEBUI_DIR) {
-                    sh '''
-                        export PUPPETEER_SKIP_DOWNLOAD=true
-                        npm ci --legacy-peer-deps
-                        npx puppeteer browsers install chrome
-
-                        export CHROME_BIN=$(npx puppeteer browsers path chrome)
-                        echo "Using Chrome at $CHROME_BIN"
-                        ls -l "$CHROME_BIN"
-
-                        npm run test
-                    '''
+                sh '''
+                    export PUPPETEER_SKIP_DOWNLOAD=true
+                    npm ci --legacy-peer-deps
+                
+                    npx puppeteer browsers install chrome
+                    export CHROME_BIN=$(npx puppeteer browsers path chrome)
+                
+                    echo "CHROME_BIN=$CHROME_BIN"
+                    chmod +x "$CHROME_BIN" || true
+                
+                    npm run test:ci
+                '''
                 }
             }
         }
