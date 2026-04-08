@@ -65,7 +65,8 @@ pipeline {
                     // '''
 
 
-
+                    // PUPPETEER_CACHE_DIR must be exported in the same sh block as browsers install chrome.
+                    // Otherwise Puppeteer will ignore it and download to default location like: ~/.npm/_npx/<hash>/node_modules/puppeteer/.local-chromium
                      sh '''
                         # Force Puppeteer to download Chrome into workspace
                         export PUPPETEER_CACHE_DIR=$WORKSPACE/.cache/puppeteer
@@ -211,27 +212,27 @@ pipeline {
                      def groovyRoot = "${env.WORKSPACE}/.cache/puppeteer"
                      echo "Purging All Puppeteer cache under ${groovyRoot} ..."                    
         
-        //             // withEnv makes the variable available to the 'sh' step as a real environment variable
+                     // withEnv makes the variable available to the 'sh' step as a real environment variable
                      withEnv(["ROOT=${groovyRoot}"]) {
                        
-        //                 // sh """
-        //                 //     if [ -d "\${ROOT}" ]; then
-        //                 //         echo "Puppeteer cache found"
-        //                 //         # Now the shell knows what \${ROOT} is and can run the safety check
-        //                 //         rm -rf "\${ROOT:?}"/*
-        //                 //     else
-        //                 //         echo "Puppeteer cache not found"
-        //                 //     fi
-        //                 //     echo "Purge complete."
-        //                 // """
+                         sh """
+                              if [ -d "\${ROOT}" ]; then
+                                  echo "Puppeteer cache found"
+                                  # Now the shell knows what \${ROOT} is and can run the safety check
+                                  rm -rf "\${ROOT:?}"/*
+                              else
+                                  echo "Puppeteer cache not found"
+                              fi
+                              echo "Purge complete."
+                          """
                         
                         
-        //                 //Delete using Jenkins-Native way
-        //                 // if (fileExists(ROOT)) {
-        //                 //     dir(ROOT) {
-        //                 //         deleteDir() // This deletes EVERYTHING inside the folder, including hidden files
-        //                 //     }
-        //                 // }
+                         //Delete using Jenkins-Native way
+                         // if (fileExists(ROOT)) {
+                         //     dir(ROOT) {
+                         //         deleteDir() // This deletes EVERYTHING inside the folder, including hidden files
+                         //     }
+                         // }
 
                          echo "Purging All Puppeteer cache done"
                      }
