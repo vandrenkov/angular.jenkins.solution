@@ -187,11 +187,11 @@ pipeline {
             steps {
                 script {
                     def groovyRoot = "${env.WORKSPACE}/.cache/puppeteer"
+                    echo "Purging All Puppeteer cache under ${groovyRoot} ..."                    
         
                     // withEnv makes the variable available to the 'sh' step as a real environment variable
                     withEnv(["ROOT=${groovyRoot}"]) {
-                         echo "Purging All Puppeteer cache under ${ROOT} ..."
-                        
+                       
                         // sh """
                         //     if [ -d "\${ROOT}" ]; then
                         //         echo "Puppeteer cache found"
