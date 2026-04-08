@@ -132,40 +132,45 @@ pipeline {
                     sh """
                         if [ -d "${ROOT}" ]; then
                             echo "Puppeteer cache found"
-                            # -r prevents the "missing operand" error if no files/dirs match
-                            find "${ROOT}" -type f -mtime +30 -print0 | xargs -0 -r rm -f || true
-                            find "${ROOT}" -type d -empty -mtime +30 -print0 | xargs -0 -r rmdir || true
+        
+                            # Delete files older than 30 days
+                            find "${ROOT}" -type f -mtime +30 -delete || true
+        
+                            # Delete empty directories older than 30 days
+                            find "${ROOT}" -type d -empty -mtime +30 -delete || true
+        
                         else
-                            echo "Puppeteer cache NOT found"                            
+                            echo "Puppeteer cache NOT found"
                         fi
+        
                         echo "Purge complete."
                     """
                     */
 
-                   //Native Jenkins/Groovy delete
-                    if (fileExists(ROOT)) {
-                        echo "Purging Puppeteer cache older than 30 days under ${ROOT} ..."
+                   //Native Jenkins/Groovy delete (failing un runs?)
+                //     if (fileExists(ROOT)) {
+                //         echo "Purging Puppeteer cache older than 30 days under ${ROOT} ..."
                         
-                        // 1. Find all files/directories in the workspace path
-                        // This step is "Agent-aware". Note: findFiles uses relative pathing from workspace.
-                        def files = findFiles(glob: ".cache/puppeteer/**")
+                //         // 1. Find all files/directories in the workspace path
+                //         // This step is "Agent-aware". Note: findFiles uses relative pathing from workspace.
+                //         def files = findFiles(glob: ".cache/puppeteer/**")
                         
-                        long now = System.currentTimeMillis()
-                        long cutoff = 30L * 24 * 60 * 60 * 1000 // 30 days in milliseconds
+                //         long now = System.currentTimeMillis()
+                //         long cutoff = 30L * 24 * 60 * 60 * 1000 // 30 days in milliseconds
         
-                        files.each { f ->
-                            if ((now - f.lastModified()) > cutoff) {
-                                echo "Deleting old item: ${f.path}"
-                                // Use sh to ensure we have permissions and handle recursive directory deletion
-                                // We use single quotes around the path to handle spaces or special chars
-                                sh "rm -rf '${env.WORKSPACE}/${f.path}'"
-                            }
-                        }
-                        echo "Purge complete."
-                    } else {
-                        echo "Puppeteer cache NOT found at ${ROOT}"
-                    }
-                }
+                //         files.each { f ->
+                //             if ((now - f.lastModified()) > cutoff) {
+                //                 echo "Deleting old item: ${f.path}"
+                //                 // Use sh to ensure we have permissions and handle recursive directory deletion
+                //                 // We use single quotes around the path to handle spaces or special chars
+                //                 sh "rm -rf '${env.WORKSPACE}/${f.path}'"
+                //             }
+                //         }
+                //         echo "Purge complete."
+                //     } else {
+                //         echo "Puppeteer cache NOT found at ${ROOT}"
+                //     }
+                // }
             }
         }
 
