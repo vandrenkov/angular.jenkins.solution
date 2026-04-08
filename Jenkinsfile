@@ -154,7 +154,7 @@ pipeline {
                         long cutoff = 30L * 24 * 60 * 60 * 1000 // 30 days in milliseconds
         
                         files.each { f ->
-                            if ((now - f.lastModified) > cutoff) {
+                            if ((now - f.lastModified()) > cutoff) {
                                 echo "Deleting old item: ${f.path}"
                                 // Use sh to ensure we have permissions and handle recursive directory deletion
                                 // We use single quotes around the path to handle spaces or special chars
