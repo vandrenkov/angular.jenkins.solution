@@ -163,6 +163,7 @@ pipeline {
                         echo "Purge complete."
                     } else {
                         echo "Puppeteer cache NOT found at ${ROOT}"
+                    }
                 }
             }
         }
