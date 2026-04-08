@@ -170,7 +170,7 @@ pipeline {
                 //     } else {
                 //         echo "Puppeteer cache NOT found at ${ROOT}"
                 //     }
-                // }
+                }
             }
         }
 
