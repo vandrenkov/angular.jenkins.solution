@@ -120,13 +120,12 @@ pipeline {
         }
 
         //Test #1: Stage to purge old browser cache (puppeteer) older than 30 days
-        /*
         stage('Purge Old Puppeteer Cache') {
             steps {
                 script {
                     // ROOT points to the job workspace
                     def ROOT = "${env.WORKSPACE}/.cache/puppeteer"
-
+                    /*
                     echo "Purging Puppeteer cache older than 30 days under ${ROOT} ..."
 
                     // Safe deletion: only delete directories older than 30 days
@@ -141,12 +140,40 @@ pipeline {
                         fi
                         echo "Purge complete."
                     """
+                    */
+
+                    //Native Jenkins/Groovy delete
+                    if (fileExists(ROOT)) {
+                        echo "Purging Puppeteer cache older than 30 days under ${ROOT} ..."
+                        
+                        // Calculate the cutoff timestamp (30 days ago)
+                        long now = System.currentTimeMillis()
+                        long cutoff = now - (30L * 24 * 60 * 60 * 1000)
+        
+                        // Use the Jenkins 'findFiles' step or standard Groovy to scan the directory
+                        // Note: Standard File objects work best in 'script' blocks on the agent
+                        new File(ROOT).eachFileRecurse { file ->
+                            if (file.lastModified() < cutoff) {
+                                echo "Deleting old file/directory: ${file.path}"
+                                if (file.isDirectory()) {
+                                    file.deleteDir() // Deletes directory and its contents
+                                } else {
+                                    file.delete()
+                                }
+                            }
+                        }
+                        echo "Purge complete."
+                    } else {
+                        echo "Puppeteer cache NOT found at ${ROOT}"
+                    }
+
                 }
             }
         }
-        */
+
 
         //Test #2: Stage to purge ALL browser cache (puppeteer)
+/*
         stage('Purge All Puppeteer Cache') {
             steps {
                 script {
@@ -178,6 +205,7 @@ pipeline {
                 }
             }
         }
+*/
         
     }
 }
