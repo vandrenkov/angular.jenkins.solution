@@ -186,6 +186,8 @@ pipeline {
         stage('Purge All Puppeteer Cache') {
             steps {
                 script {
+                    echo "Purging All Puppeteer cache starting..."
+                    
                     def groovyRoot = "${env.WORKSPACE}/.cache/puppeteer"
                     echo "Purging All Puppeteer cache under ${groovyRoot} ..."                    
         
