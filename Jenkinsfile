@@ -132,8 +132,9 @@ pipeline {
                     sh """
                         if [ -d "${ROOT}" ]; then
                             echo "Puppeteer cache found"
-                            find "${ROOT}" -type f -mtime +30 -print0 | xargs -0 rm -f || true
-                            find "${ROOT}" -type d -empty -mtime +30 -print0 | xargs -0 rmdir || true
+                            # -r prevents the "missing operand" error if no files/dirs match
+                            find "${ROOT}" -type f -mtime +30 -print0 | xargs -0 -r rm -f || true
+                            find "${ROOT}" -type d -empty -mtime +30 -print0 | xargs -0 -r rmdir || true
                         else
                             echo "Puppeteer cache NOT found"                            
                         fi
