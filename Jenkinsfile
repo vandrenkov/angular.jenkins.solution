@@ -61,13 +61,11 @@ pipeline {
                 sh '''
                     export PUPPETEER_SKIP_DOWNLOAD=true
                     npm ci --legacy-peer-deps
-                
                     npx puppeteer browsers install chrome
+                    
                     export CHROME_BIN=$(npx puppeteer browsers path chrome)
-                
                     echo "CHROME_BIN=$CHROME_BIN"
-                    chmod +x "$CHROME_BIN" || true
-                
+                    
                     npm run test:ci
                 '''
                 }
