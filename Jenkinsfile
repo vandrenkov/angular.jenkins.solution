@@ -63,8 +63,8 @@ pipeline {
                         npm ci --legacy-peer-deps
                         npx puppeteer browsers install chrome
 
-                        export CHROME_BIN=$(npx puppeteer browsers path chrome)
-                        echo "Using Chrome at $CHROME_BIN"
+                        // export CHROME_BIN=$(npx puppeteer browsers path chrome)
+                        // echo "Using Chrome at $CHROME_BIN"
                         
                         npm run test
                     '''
@@ -107,8 +107,8 @@ pipeline {
 
                         npx puppeteer browsers install chrome
 
-                        export CHROME_BIN=$(npx puppeteer browsers path chrome)
-                        echo "Using Chrome at $CHROME_BIN"
+                        // export CHROME_BIN=$(npx puppeteer browsers path chrome)
+                        // echo "Using Chrome at $CHROME_BIN"
                         
                         npm run test:ci'
                     '''
@@ -239,16 +239,16 @@ pipeline {
                     // withEnv makes the variable available to the 'sh' step as a real environment variable
                     withEnv(["ROOT=${groovyRoot}"]) {
                         
-                        sh """
-                            if [ -d "\${ROOT}" ]; then
-                                echo "Puppeteer cache found"
-                                # Now the shell knows what \${ROOT} is and can run the safety check
-                                rm -rf "\${ROOT:?}"/*
-                            else
-                                echo "Puppeteer cache not found"
-                            fi
-                            echo "Purge complete."
-                        """
+                        // sh """
+                        //     if [ -d "\${ROOT}" ]; then
+                        //         echo "Puppeteer cache found"
+                        //         # Now the shell knows what \${ROOT} is and can run the safety check
+                        //         rm -rf "\${ROOT:?}"/*
+                        //     else
+                        //         echo "Puppeteer cache not found"
+                        //     fi
+                        //     echo "Purge complete."
+                        // """
                         
                         
                         //Delete using Jenkins-Native way
