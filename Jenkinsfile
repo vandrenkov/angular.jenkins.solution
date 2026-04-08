@@ -118,5 +118,55 @@ pipeline {
                 sh 'echo "[PLACEHOLDER] Docker CI viks-api — add image build/push when ready."'
             }
         }
+
+        //Test #1: Stage to purge old browser cache (puppeteer) older than 30 days
+        stage('Purge Old Puppeteer Cache') {
+            steps {
+                script {
+                    // ROOT points to the job workspace
+                    def ROOT = "${env.WORKSPACE}/.cache/puppeteer"
+
+                    echo "Purging Puppeteer cache older than 30 days under ${ROOT} ..."
+
+                    // Safe deletion: only delete directories older than 30 days
+                    sh """
+                        if [ -d "${ROOT}" ]; then
+                            echo "Puppeteer cache found"
+                            find "${ROOT}" -type f -mtime +30 -print0 | xargs -0 rm -f || true
+                            find "${ROOT}" -type d -empty -mtime +30 -print0 | xargs -0 rmdir || true
+                        else
+                            echo "Puppeteer cache NOT found"                            
+                        fi
+                        echo "Purge complete."
+                    """
+                }
+            }
+        }
+
+        //Test #2: Stage to purge all browser cache (puppeteer)
+        /*
+        stage('Purge All Puppeteer Cache') {
+            steps {
+                script {
+                    // ROOT points to the job workspace
+                    def ROOT = "${env.WORKSPACE}/.cache/puppeteer"
+
+                    echo "Purging all Puppeteer cache under ${ROOT} ..."
+
+                    sh """
+                        if [ -d "${ROOT}" ]; then
+                            echo "Puppeteer cache found"
+                            # Delete all files and subdirectories inside the directory
+                            rm -rf "${ROOT:?}"/*
+                        else
+                            echo "Puppeteer cache not found"
+                        fi
+                        echo "Purge complete."
+                    """
+                }
+            }
+        }
+        */
+        
     }
 }
