@@ -215,7 +215,7 @@ pipeline {
 
         //                 echo "Purging All Puppeteer cache done"
         //             }
-        //         }
+                 }
              }
          }
 
