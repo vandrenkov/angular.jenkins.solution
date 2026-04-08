@@ -120,6 +120,7 @@ pipeline {
         }
 
         //Test #1: Stage to purge old browser cache (puppeteer) older than 30 days
+        /*
         stage('Purge Old Puppeteer Cache') {
             steps {
                 script {
@@ -143,9 +144,9 @@ pipeline {
                 }
             }
         }
+        */
 
         //Test #2: Stage to purge all browser cache (puppeteer)
-        /*
         stage('Purge All Puppeteer Cache') {
             steps {
                 script {
@@ -167,7 +168,6 @@ pipeline {
                 }
             }
         }
-        */
         
     }
 }
