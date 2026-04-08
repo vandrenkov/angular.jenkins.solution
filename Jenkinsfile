@@ -188,11 +188,11 @@ pipeline {
                  script {
                      echo "Purging All Puppeteer cache starting..."
                     
-        //             def groovyRoot = "${env.WORKSPACE}/.cache/puppeteer"
-        //             echo "Purging All Puppeteer cache under ${groovyRoot} ..."                    
+                     def groovyRoot = "${env.WORKSPACE}/.cache/puppeteer"
+                     echo "Purging All Puppeteer cache under ${groovyRoot} ..."                    
         
         //             // withEnv makes the variable available to the 'sh' step as a real environment variable
-        //             withEnv(["ROOT=${groovyRoot}"]) {
+                     withEnv(["ROOT=${groovyRoot}"]) {
                        
         //                 // sh """
         //                 //     if [ -d "\${ROOT}" ]; then
@@ -213,8 +213,8 @@ pipeline {
         //                 //     }
         //                 // }
 
-        //                 echo "Purging All Puppeteer cache done"
-        //             }
+                         echo "Purging All Puppeteer cache done"
+                     }
                  }
              }
          }
