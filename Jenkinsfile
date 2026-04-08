@@ -18,7 +18,6 @@ pipeline {
     environment {
         CI = 'true'
         WEBUI_DIR = 'aim/viks-webui'
-        AIM_WEBUI_DIR = 'aim/aim-webui'
         API_DIR = 'aim/viks-api'
         // Shared browser cache on Jenkins agents (Linux). Align with karma.conf.js default on Linux.
         // PUPPETEER_CACHE_DIR = '/mnt/azagent01/.cache/puppeteer'
@@ -55,46 +54,6 @@ pipeline {
             }
         }
 
-        stage('Test aim-webui') {
-            steps {
-                dir(env.AIM_WEBUI_DIR) {
-                sh '''
-                    export PUPPETEER_SKIP_DOWNLOAD=true
-                    npm ci --legacy-peer-deps
-                    npx puppeteer browsers install chrome
-                    
-                    export CHROME_BIN=$(npx puppeteer browsers path chrome)
-                    echo "CHROME_BIN=$CHROME_BIN"
-                    
-                    npm run test:ci
-                '''
-                }
-            }
-        }
-
-        stage('Build aim-webui') {
-            steps {
-                dir(env.AIM_WEBUI_DIR) {
-                    // Note: Angular 18 projects usually build via 'ng build' 
-                    // which uses the project name defined in angular.json
-                    sh 'npx ng build --configuration production'
-                }
-            }
-        }
-
-        stage('SonarQube aim-webui') {
-            steps {
-                sh 'echo "[SKIP] SonarQube aim-webui — configure SonarQube Scanner to enable."'
-            }
-        }
-
-        stage('Docker CI aim-webui') {
-            steps {
-                sh 'echo "[PLACEHOLDER] Docker CI aim-webui — add image build/push when ready."'
-            }
-        }
-
-        
         stage('Test viks-webui') {
             steps {
                 dir(env.WEBUI_DIR) {
@@ -104,9 +63,9 @@ pipeline {
                     sh '''
                         export PUPPETEER_SKIP_DOWNLOAD=true
                         npm ci --legacy-peer-deps
-                        npx puppeteer browsers install chrome
-                        npm run test:ci'
                     '''
+                    sh 'npx puppeteer browsers install chrome'
+                    sh 'npm run test:ci'
                 }
             }
         }
@@ -232,16 +191,16 @@ pipeline {
                     // withEnv makes the variable available to the 'sh' step as a real environment variable
                     withEnv(["ROOT=${groovyRoot}"]) {
                         
-                        // sh """
-                        //     if [ -d "\${ROOT}" ]; then
-                        //         echo "Puppeteer cache found"
-                        //         # Now the shell knows what \${ROOT} is and can run the safety check
-                        //         rm -rf "\${ROOT:?}"/*
-                        //     else
-                        //         echo "Puppeteer cache not found"
-                        //     fi
-                        //     echo "Purge complete."
-                        // """
+                        sh """
+                            if [ -d "\${ROOT}" ]; then
+                                echo "Puppeteer cache found"
+                                # Now the shell knows what \${ROOT} is and can run the safety check
+                                rm -rf "\${ROOT:?}"/*
+                            else
+                                echo "Puppeteer cache not found"
+                            fi
+                            echo "Purge complete."
+                        """
                         
                         
                         //Delete using Jenkins-Native way
