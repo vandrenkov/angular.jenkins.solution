@@ -183,7 +183,6 @@ pipeline {
         }
 
         //Test #2: Stage to purge ALL browser cache (puppeteer)
-        /*
         stage('Purge All Puppeteer Cache') {
             steps {
                 script {
@@ -214,7 +213,6 @@ pipeline {
                 }
             }
         }
-        */
 
         
     }
