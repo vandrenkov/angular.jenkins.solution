@@ -1,20 +1,15 @@
-# Build Angular app, then serve static files with nginx
-FROM node:22-bookworm-slim AS build
-
+# Stage 1: Build
+FROM node:18-alpine AS build
 WORKDIR /app
-
-# Karma/Puppeteer Chromium is not used during `ng build`; skip the large browser download.
-ENV PUPPETEER_SKIP_DOWNLOAD=true
-
-COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps
-
+COPY package*.json ./
+RUN npm ci
 COPY . .
-RUN npx ng build aim-webui --configuration production
+# Angular 18 default output is dist/[project-name]/browser
+RUN npx ng build --configuration production
 
-FROM nginx:1.27-alpine
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
+# Verify your project name in angular.json matches 'aim-webui'
 COPY --from=build /app/dist/aim-webui/browser /usr/share/nginx/html
-
 EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
