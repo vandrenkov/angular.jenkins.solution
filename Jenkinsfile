@@ -128,14 +128,14 @@ pipeline {
                         npm ci --legacy-peer-deps
 
                         export PUPPETEER_SKIP_DOWNLOAD=false
-                        echo "Installing Chromium for Puppeteer in $PUPPETEER_CACHE_DIR..."
-                        npx puppeteer browsers install chrome
+                        echo "Installing chrome-headless-shell for Puppeteer in $PUPPETEER_CACHE_DIR..."
+                        npx puppeteer browsers install chrome-headless-shell
 
-                        echo "Chrome binary path:"
-                        npx puppeteer browsers path chrome
-                        ls -R $PUPPETEER_CACHE_DIR || true
+                        echo "chrome-headless-shell path:"
+                        npx puppeteer browsers path chrome-headless-shell
+                        ls -R $PUPPETEER_CACHE_DIR/chrome-headless-shell || true
 
-                        export CHROME_BIN=$(npx puppeteer browsers path chrome)
+                        export CHROME_BIN=$(npx puppeteer browsers path chrome-headless-shell)
 
                         npm run test:ci
                     '''

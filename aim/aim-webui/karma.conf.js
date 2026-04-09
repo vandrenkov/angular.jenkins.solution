@@ -1,14 +1,69 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
-// Resolve Chromium from Puppeteer (same pattern as many Angular+Karma CI setups).
-// Jenkins sets PUPPETEER_CACHE_DIR. On Linux without env, default under repo root (two levels up from this file).
+// CI installs chrome-headless-shell into PUPPETEER_CACHE_DIR (see Jenkinsfile). Resolve that binary
+// for Karma; fall back to full Chrome from Puppeteer when the headless shell cache is missing (e.g. local dev).
 const path = require('path');
+const fs = require('fs');
+const {
+  computeExecutablePath,
+  Browser,
+  detectBrowserPlatform,
+  getVersionComparator,
+} = require('@puppeteer/browsers');
+const puppeteer = require('puppeteer');
+
 if (!process.env.PUPPETEER_CACHE_DIR && process.platform === 'linux') {
   process.env.PUPPETEER_CACHE_DIR = path.join(__dirname, '..', '..', '.cache', 'puppeteer');
 }
-const puppeteer = require('puppeteer');
-process.env.CHROME_BIN = puppeteer.executablePath();
+
+/**
+ * @returns {string | null} Absolute path to chrome-headless-shell in the Puppeteer cache, if present.
+ */
+function resolveCachedHeadlessShellExecutable(cacheDir) {
+  const shellRoot = path.join(cacheDir, Browser.CHROMEHEADLESSSHELL);
+  if (!fs.existsSync(shellRoot)) {
+    return null;
+  }
+  const platform = detectBrowserPlatform();
+  const prefix = `${platform}-`;
+  const cmp = getVersionComparator(Browser.CHROMEHEADLESSSHELL);
+  const dirs = fs
+    .readdirSync(shellRoot)
+    .filter((name) => {
+      if (!name.startsWith(prefix)) {
+        return false;
+      }
+      return fs.statSync(path.join(shellRoot, name)).isDirectory();
+    })
+    .sort((a, b) => cmp(a.slice(prefix.length), b.slice(prefix.length)));
+  const dirName = dirs.at(-1);
+  if (!dirName) {
+    return null;
+  }
+  const buildId = dirName.slice(prefix.length);
+  return computeExecutablePath({
+    cacheDir,
+    browser: Browser.CHROMEHEADLESSSHELL,
+    buildId,
+    platform,
+  });
+}
+
+if (!process.env.CHROME_BIN) {
+  const cacheDir = process.env.PUPPETEER_CACHE_DIR;
+  const headlessShell =
+    cacheDir && resolveCachedHeadlessShellExecutable(cacheDir);
+  if (headlessShell) {
+    process.env.CHROME_BIN = headlessShell;
+  } else {
+    try {
+      process.env.CHROME_BIN = puppeteer.executablePath();
+    } catch {
+      /* No downloaded Chrome; karma-chrome-launcher may still find a system browser. */
+    }
+  }
+}
 
 module.exports = function (config) {
   config.set({
