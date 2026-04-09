@@ -69,22 +69,40 @@ pipeline {
                     // PUPPETEER_CACHE_DIR must be exported in the same sh block as browsers install chrome.
                     // Otherwise Puppeteer will ignore it and download to default location like: ~/.npm/_npx/<hash>/node_modules/puppeteer/.local-chromium
                      sh '''
-                        # Force Puppeteer to download Chrome into workspace
+                        set -e
                         export PUPPETEER_CACHE_DIR=$WORKSPACE/.cache/puppeteer
                         export PUPPETEER_SKIP_DOWNLOAD=false
-        
-                        echo "Installing Chromium for Puppeteer in $PUPPETEER_CACHE_DIR..."
+
+                        echo "========== Test viks-webui: browser / Karma context =========="
+                        echo "WORKSPACE=$WORKSPACE"
+                        echo "Project dir (pwd)=$(pwd)"
+                        echo "PUPPETEER_CACHE_DIR=$PUPPETEER_CACHE_DIR  (Puppeteer installs browsers here when set)"
+                        echo "If unset, default is often ~/.cache/puppeteer — not workspace (harder to purge per job)."
+                        echo "npx resolves=$({ command -v npx || true; })"
+                        echo "nodejs=$(node -v) npm=$(npm -v)"
+
+                        echo "Installing Chrome for Testing into cache..."
                         npx puppeteer browsers install chrome
-        
-                        # Confirm installation
-                        echo "Chrome binary path:"
-                        npx puppeteer browsers path chrome
-                        ls -R $PUPPETEER_CACHE_DIR || true
-        
-                        # Export CHROME_BIN so Karma finds it
+
+                        echo "--- Resolved browser path (CLI) ---"
+                        npx puppeteer browsers path chrome || true
+
+                        echo "--- Cache summary (not full tree; avoids huge logs) ---"
+                        du -sh "$PUPPETEER_CACHE_DIR" 2>/dev/null || true
+                        ls -la "$PUPPETEER_CACHE_DIR" 2>/dev/null || true
+                        find "$PUPPETEER_CACHE_DIR" -maxdepth 3 -type d 2>/dev/null | head -40 || true
+
                         export CHROME_BIN=$(npx puppeteer browsers path chrome)
-        
-                        # Run tests
+                        echo "--- What Karma / karma-chrome-launcher sees ---"
+                        echo "CHROME_BIN=$CHROME_BIN"
+                        if [ -n "$CHROME_BIN" ] && [ -x "$CHROME_BIN" ]; then
+                          ls -la "$CHROME_BIN"
+                        else
+                          echo "WARN: CHROME_BIN empty or not executable. Karma may fall back to karma.conf.js require('puppeteer') / system Chrome."
+                        fi
+                        echo "karma.conf.js: puppeteer.executablePath + PUPPETEER_CACHE_DIR should match this cache when tests run."
+                        echo "========== Running tests =========="
+
                         npm run test:ci
                     '''
                     
@@ -123,19 +141,41 @@ pipeline {
                     // PUPPETEER_CACHE_DIR must be exported in the same sh block as browsers install chrome.
                     // Otherwise Puppeteer will ignore it and download to default location like: ~/.npm/_npx/<hash>/node_modules/puppeteer/.local-chromium
                      sh '''
+                        set -e
                         export PUPPETEER_CACHE_DIR=$WORKSPACE/.cache/puppeteer
+
+                        echo "========== Test aim-webui: browser / Karma context =========="
+                        echo "WORKSPACE=$WORKSPACE"
+                        echo "Project dir (pwd)=$(pwd)"
+                        echo "PUPPETEER_CACHE_DIR=$PUPPETEER_CACHE_DIR"
+                        echo "If unset, Puppeteer defaults to ~/.cache/puppeteer (not this workspace)."
+
+                        echo "--- npm ci (PUPPETEER_SKIP_DOWNLOAD=true skips bundled browser fetch) ---"
                         export PUPPETEER_SKIP_DOWNLOAD=true
                         npm ci --legacy-peer-deps
+                        echo "puppeteer@$(node -p "require('puppeteer/package.json').version") @puppeteer/browsers@$(node -p "require('@puppeteer/browsers/package.json').version")"
 
                         export PUPPETEER_SKIP_DOWNLOAD=false
-                        echo "Installing chrome-headless-shell for Puppeteer in $PUPPETEER_CACHE_DIR..."
+                        echo "Installing chrome-headless-shell into $PUPPETEER_CACHE_DIR ..."
                         npx puppeteer browsers install chrome-headless-shell
 
-                        echo "chrome-headless-shell path:"
-                        npx puppeteer browsers path chrome-headless-shell
-                        ls -R $PUPPETEER_CACHE_DIR/chrome-headless-shell || true
+                        echo "--- Resolved browser path (CLI) ---"
+                        npx puppeteer browsers path chrome-headless-shell || true
+
+                        echo "--- chrome-headless-shell cache tree (depth 4, capped) ---"
+                        du -sh "$PUPPETEER_CACHE_DIR/chrome-headless-shell" 2>/dev/null || true
+                        find "$PUPPETEER_CACHE_DIR/chrome-headless-shell" -maxdepth 4 -type d 2>/dev/null | head -25 || true
 
                         export CHROME_BIN=$(npx puppeteer browsers path chrome-headless-shell)
+                        echo "--- What Karma sees ---"
+                        echo "CHROME_BIN=$CHROME_BIN  (env for karma-chrome-launcher)"
+                        if [ -n "$CHROME_BIN" ] && [ -x "$CHROME_BIN" ]; then
+                          ls -la "$CHROME_BIN"
+                        else
+                          echo "WARN: CHROME_BIN empty or not executable."
+                        fi
+                        echo "karma.conf.js: scans $PUPPETEER_CACHE_DIR for chrome-headless-shell, else require('puppeteer').executablePath()."
+                        echo "========== Running tests =========="
 
                         npm run test:ci
                     '''
