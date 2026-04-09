@@ -146,7 +146,7 @@ pipeline {
         stage('Build aim-webui') {
             steps {
                 dir(env.AIM_WEBUI_DIR) {
-                    sh 'npx ng build viks-webui --configuration production'
+                    sh 'npx ng build aim-webui --configuration production'
                 }
             }
         }
