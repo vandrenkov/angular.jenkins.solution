@@ -118,25 +118,25 @@ pipeline {
             steps {
                 dir(env.AIM_WEBUI_DIR) {
 
+                    // Install deps first so karma.conf.js can require('puppeteer'). Skip browser download
+                    // during npm ci; install Chrome into PUPPETEER_CACHE_DIR below.
                     // PUPPETEER_CACHE_DIR must be exported in the same sh block as browsers install chrome.
                     // Otherwise Puppeteer will ignore it and download to default location like: ~/.npm/_npx/<hash>/node_modules/puppeteer/.local-chromium
                      sh '''
-                        # Force Puppeteer to download Chrome into workspace
                         export PUPPETEER_CACHE_DIR=$WORKSPACE/.cache/puppeteer
+                        export PUPPETEER_SKIP_DOWNLOAD=true
+                        npm ci --legacy-peer-deps
+
                         export PUPPETEER_SKIP_DOWNLOAD=false
-        
                         echo "Installing Chromium for Puppeteer in $PUPPETEER_CACHE_DIR..."
                         npx puppeteer browsers install chrome
-        
-                        # Confirm installation
+
                         echo "Chrome binary path:"
                         npx puppeteer browsers path chrome
                         ls -R $PUPPETEER_CACHE_DIR || true
-        
-                        # Export CHROME_BIN so Karma finds it
+
                         export CHROME_BIN=$(npx puppeteer browsers path chrome)
-        
-                        # Run tests
+
                         npm run test:ci
                     '''
                 }
